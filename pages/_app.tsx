@@ -15,6 +15,7 @@ import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 import { arbitrum, mainnet, optimism, polygon, base } from 'wagmi/chains';
 import '@decent.xyz/the-box/index.css';
 import { arbitrumGoerli } from 'viem/chains';
+import { optimismSepolia, arbitrumSepolia, rarible, raribleTestnet } from "../utils/constants/customChains";
 
 const getAlchemyProviders = () => {
   const providers: ReturnType<typeof alchemyProvider>[] = [];
@@ -28,7 +29,7 @@ const getAlchemyProviders = () => {
 };
 
 const { chains, publicClient } = configureChains(
-  [mainnet, arbitrum, optimism, polygon, base, arbitrumGoerli],
+  [mainnet, arbitrum, optimism, polygon, base, arbitrumGoerli, optimismSepolia, arbitrumSepolia, rarible, raribleTestnet],
   [
     // @ts-ignore
     ...getAlchemyProviders(),
