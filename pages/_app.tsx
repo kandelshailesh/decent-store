@@ -13,9 +13,19 @@ import localFont from 'next/font/local';
 // Default styles that can be overridden by your app
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 import { arbitrum, mainnet, optimism, polygon, base } from 'wagmi/chains';
-import '@decent.xyz/the-box/index.css';
+if (process.env.NODE_ENV !== 'development') {
+  // @ts-ignore
+  import('@decent.xyz/the-box/index.css').then(() => {
+    console.log('💅🏼 box styles imported');
+  });
+}
 import { arbitrumGoerli } from 'viem/chains';
-import { optimismSepolia, arbitrumSepolia, rarible, raribleTestnet } from "../utils/constants/customChains";
+import {
+  optimismSepolia,
+  arbitrumSepolia,
+  rarible,
+  raribleTestnet,
+} from '../utils/constants/customChains';
 
 const getAlchemyProviders = () => {
   const providers: ReturnType<typeof alchemyProvider>[] = [];
@@ -29,7 +39,18 @@ const getAlchemyProviders = () => {
 };
 
 const { chains, publicClient } = configureChains(
-  [mainnet, arbitrum, optimism, polygon, base, arbitrumGoerli, optimismSepolia, arbitrumSepolia, rarible, raribleTestnet],
+  [
+    mainnet,
+    arbitrum,
+    optimism,
+    polygon,
+    base,
+    arbitrumGoerli,
+    optimismSepolia,
+    arbitrumSepolia,
+    rarible,
+    raribleTestnet,
+  ],
   [
     // @ts-ignore
     ...getAlchemyProviders(),
