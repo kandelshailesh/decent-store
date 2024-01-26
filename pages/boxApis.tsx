@@ -1,5 +1,5 @@
 import { Layout } from '@/components/Layouts/Layout';
-import { Address } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 import { ChainId, ActionType, ActionConfig, Transaction, Payment, BridgeId, RelayInfo, EvmTransaction } from '@decent.xyz/box-common';
 import { createBoxActionRequest } from '@/utils/constants/apiTestInputs';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
@@ -26,7 +26,8 @@ type BoxActionResponse = {
   relayInfo?: RelayInfo;
 };
 
-const BASE_URL = "https://box-api-git-v2-decent-webapp.vercel.app/api/getBoxAction";
+const BASE_URL_V1 = "https://box-v1.api.decent.xyz/api/getBoxAction";
+const BASE_URL_v2 = "https://box-api-git-v2-decent-webapp.vercel.app/api/getBoxAction";
 
 export default function ExamplePage() {
   const { address: account } = useAccount();
@@ -34,11 +35,17 @@ export default function ExamplePage() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
 
+  // const data = encodeFunctionData({
+  //   abi: ['function transfer(address to)'],
+  //   functionName: 'transfer',
+  //   args: [account]
+  // })
+
   async function runTx(){
     // Refer to utils/constants/apiTestInputs to see the possible configs
     // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
     try {
-      const scenario = 3;
+      const scenario = 6;
       const { config, response } = await generateResponse(scenario, account!);
 
       if (chain?.id !== config?.srcChainId) {
@@ -71,7 +78,7 @@ async function generateResponse(randInt: number, account: Address){
     req = createBoxActionRequest(account, randInt);
   };
 
-  const url = `${BASE_URL}?arguments=${JSON.stringify(
+  const url = `${BASE_URL_V2}?arguments=${JSON.stringify(
     req,
     bigintSerializer
   )}`;
