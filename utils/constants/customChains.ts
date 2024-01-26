@@ -52,7 +52,7 @@ export const arbitrumSepolia = {
 };
 
 export const rarible = {
-  id: ChainId.RARIBLE,
+  id: 1380012617,
   name: 'Rarible',
   network: 'rarible',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
@@ -75,7 +75,7 @@ export const rarible = {
 };
 
 export const raribleTestnet = {
-  id: ChainId.RARIBLE_TESTNET,
+  id: 1918988905,
   name: 'Rarible Testnet',
   network: 'rarible-testnet',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },

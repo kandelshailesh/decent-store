@@ -55,7 +55,7 @@ const apiTestInputs: BoxActionRequest[] = [
     sender: '',
     srcChainId: 1918988905 as ChainId,
     srcToken: zeroAddress,
-    dstChainId: ChainId.OPTIMISM,
+    dstChainId: 11155420 as ChainId,
     dstToken: zeroAddress,
     slippage: 0,
     actionType: ActionType.SwapAction,

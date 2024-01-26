@@ -38,9 +38,8 @@ export default function ExamplePage() {
     // Refer to utils/constants/apiTestInputs to see the possible configs
     // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
     try {
-      const scenario = 0;
+      const scenario = 3;
       const { config, response } = await generateResponse(scenario, account!);
-      console.log("TEST: ", config, response)
 
       if (chain?.id !== config?.srcChainId) {
         switchNetwork?.(config?.srcChainId)
