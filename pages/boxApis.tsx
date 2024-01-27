@@ -10,7 +10,7 @@ import {
   RelayInfo,
   EvmTransaction,
 } from '@decent.xyz/box-common';
-import { createBoxActionRequest } from '@/utils/constants/apiTestInputs';
+import { ApiTests, createBoxActionRequest } from '@/utils/constants/apiTestInputs';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ export default function ExamplePage() {
     // Refer to utils/constants/apiTestInputs to see the possible configs
     // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
     try {
-      const scenario = 6;
+      const scenario = ApiTests.MULTI_HOP_OP_ARB_RARI;
       const { config, response } = await generateResponse(scenario, account!);
 
       if (chain?.id !== config?.srcChainId) {
@@ -80,10 +80,10 @@ export default function ExamplePage() {
   );
 }
 
-const generateResponse = async (index: number, account: Address) => {
+const generateResponse = async (apiTest: ApiTests, account: Address) => {
   let req;
   if (account) {
-    req = createBoxActionRequest(account, index);
+    req = await createBoxActionRequest(account, apiTest);
   }
 
   const url = `${BASE_URL_V1}?arguments=${JSON.stringify(
