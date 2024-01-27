@@ -10,7 +10,8 @@ import {
   RelayInfo,
   EvmTransaction,
 } from '@decent.xyz/box-common';
-import { ApiTests, createBoxActionRequest } from '@/utils/constants/apiTestInputs';
+import { createBoxActionRequest } from '@/utils/constants/apiTestInputs';
+import { ApiTests } from '@/utils/types';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
 import { useState } from 'react';

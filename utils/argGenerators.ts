@@ -1,6 +1,6 @@
-import { ApiTests } from './constants/apiTestInputs';
 import { rarible } from './constants/customChains';
 import { createPublicClient, http } from 'viem';
+import { ApiTests } from '@/utils/types';
 
 export const generateArgsMultiHop = async (sender: string) => {
   const AMOUNT = 1000000000000n;

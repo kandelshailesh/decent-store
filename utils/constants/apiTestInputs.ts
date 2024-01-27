@@ -6,18 +6,9 @@ import {
 } from '@decent.xyz/box-common';
 import { zeroAddress, parseUnits, Address } from 'viem';
 import { argGenerators } from '@/utils/argGenerators';
+import { ApiTests } from '@/utils/types';
 
 const ARB_INBOX_PROXY = '0x37e60f80d921dc5e7f501a7130f31f6548dba564';
-
-export enum ApiTests {
-  SWAP_ARB_TO_OP,
-  SWAP_OP_SEPOLIA_TO_RARI_TESTNET,
-  SWAP_ARB_SEPOLIA_TO_RARI_TESTNET,
-  SWAP_RARI_TESTNET_TO_ARB_SEPOLIA,
-  SWAP_ARB_TO_RARI,
-  SWAP_RARI_TO_ARB,
-  MULTI_HOP_OP_ARB_RARI,
-}
 
 const apiTestInputs: Record<ApiTests, BoxActionRequest> = {
   [ApiTests.SWAP_ARB_TO_OP]: {
