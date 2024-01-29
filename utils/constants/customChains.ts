@@ -1,5 +1,3 @@
-import { ChainId } from '@decent.xyz/box-common';
-import { Lookup } from '@decent.xyz/box-common';
 
 export const optimismSepolia = {
   id: 11155420,
@@ -96,10 +94,3 @@ export const raribleTestnet = {
   },
   testnet: true,
 };
-
-export const customWagmiChains: Lookup<ChainId, any> = {
-  [ChainId.ARBITRUM_SEPOLIA]: arbitrumSepolia,
-  [ChainId.OPTIMISM_SEPOLIA]: optimismSepolia,
-  [ChainId.RARIBLE_TESTNET]: rarible,
-  [ChainId.RARIBLE_TESTNET]: raribleTestnet,
-}

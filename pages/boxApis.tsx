@@ -1,7 +1,17 @@
 import { Layout } from '@/components/Layouts/Layout';
-import { Address } from 'viem';
-import { ChainId, ActionType, ActionConfig, Transaction, Payment, BridgeId, RelayInfo, EvmTransaction } from '@decent.xyz/box-common';
+import { Address, encodeFunctionData } from 'viem';
+import {
+  ChainId,
+  ActionType,
+  ActionConfig,
+  Transaction,
+  Payment,
+  BridgeId,
+  RelayInfo,
+  EvmTransaction,
+} from '@decent.xyz/box-common';
 import { createBoxActionRequest } from '@/utils/constants/apiTestInputs';
+import { ApiTests } from '@/utils/types';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
 import { useState } from 'react';
@@ -26,7 +36,11 @@ type BoxActionResponse = {
   relayInfo?: RelayInfo;
 };
 
-const BASE_URL = "https://box-api-git-v2-decent-webapp.vercel.app/api/getBoxAction";
+const BASE_URL_V1 = 'https://box-v1.api.decent.xyz/api/getBoxAction';
+const BASE_URL_V2 =
+  'https://box-api-git-v2-decent-webapp.vercel.app/api/getBoxAction';
+const LOCAL_HOST_URL = 'http://localhost:4000/api/getBoxAction';
+// TODO: none of these should be called, just box
 
 export default function ExamplePage() {
   const { address: account } = useAccount();
@@ -34,20 +48,20 @@ export default function ExamplePage() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
 
-  async function runTx(){
+  const runTx = async () => {
     // Refer to utils/constants/apiTestInputs to see the possible configs
     // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
     try {
-      const scenario = 3;
+      const scenario = ApiTests.MULTI_HOP_OP_ARB_RARI;
       const { config, response } = await generateResponse(scenario, account!);
 
       if (chain?.id !== config?.srcChainId) {
-        switchNetwork?.(config?.srcChainId)
+        switchNetwork?.(config?.srcChainId);
       } else {
         const tx = response?.tx as EvmTransaction;
         const { hash } = await sendTransaction(tx);
         setTxHash(hash);
-      };
+      }
     } catch (e) {
       console.log(e);
     }
@@ -56,58 +70,62 @@ export default function ExamplePage() {
   return (
     <Layout>
       <h1 className={'font-semibold text-2xl mb-2'}>Box API's</h1>
-      <button 
+      <button
         onClick={() => runTx()}
-        className='bg-black px-5 py-2 rounded-full text-white hover:opacity-80'
-      >Send a Tx</button>
+        className="bg-black px-5 py-2 rounded-full text-white hover:opacity-80"
+      >
+        Send a Tx
+      </button>
       <p className="py-4">{txHash}</p>
     </Layout>
   );
 }
 
-async function generateResponse(randInt: number, account: Address){
+const generateResponse = async (apiTest: ApiTests, account: Address) => {
   let req;
   if (account) {
-    req = createBoxActionRequest(account, randInt);
-  };
+    req = await createBoxActionRequest(account, apiTest);
+  }
 
-  const url = `${BASE_URL}?arguments=${JSON.stringify(
+  const url = `${BASE_URL_V1}?arguments=${JSON.stringify(
     req,
     bigintSerializer
   )}`;
   try {
     const response = await fetch(url, {
       headers: {
-        "x-api-key": process.env.NEXT_PUBLIC_DECENT_API_KEY as string,
+        'x-api-key': process.env.NEXT_PUBLIC_DECENT_API_KEY as string,
       },
     });
     const data = await response.text();
 
-    const actionResponse: BoxActionResponse = JSON.parse(data, bigintDeserializer);
-    console.log(actionResponse)
+    const actionResponse: BoxActionResponse = JSON.parse(
+      data,
+      bigintDeserializer
+    );
     return {
       config: req,
-      response: actionResponse
+      response: actionResponse,
     };
   } catch (e) {
-    console.error("Error getting response");
+    console.error('Error getting response', e);
     return {
       config: null,
       response: null,
     };
   }
-}
+};
 
 const bigintSerializer = (key: string, value: unknown): unknown => {
-  if (typeof value === "bigint") {
-    return value.toString() + "n";
+  if (typeof value === 'bigint') {
+    return value.toString() + 'n';
   }
 
   return value;
 };
 
 const bigintDeserializer = (key: string, value: unknown): unknown => {
-  if (typeof value === "string" && /^-?\d+n$/.test(value)) {
+  if (typeof value === 'string' && /^-?\d+n$/.test(value)) {
     return BigInt(value.slice(0, -1));
   }
 
