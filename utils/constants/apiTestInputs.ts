@@ -102,12 +102,12 @@ const apiTestInputs: Record<ApiTests, BoxActionRequest> = {
     },
   },
   [ApiTests.MULTI_HOP_OP_ARB_RARI]: {
-    sender: '0xFDAf8F210d52a3f8EE416ad06Ff4A0868bB649D4',
+    sender: '',
     srcChainId: ChainId.OPTIMISM, // any source
     srcToken: zeroAddress, // can let users select any token on source chain with DeFi liquidity
     dstChainId: ChainId.ARBITRUM, // always ARB
     dstToken: zeroAddress, // must be Ethereum to call next function
-    slippage: 0,
+    slippage: 1,
     actionType: ActionType.NftMint,
     actionConfig: {
       chainId: ChainId.ARBITRUM,
