@@ -38,7 +38,7 @@ type BoxActionResponse = {
 
 const BASE_URL_V1 = 'https://box-v1.api.decent.xyz/api/getBoxAction';
 const BASE_URL_V2 =
-  'https://box-api-git-v2-decent-webapp.vercel.app/api/getBoxAction';
+  'https://box-v2.api.decent.xyz/api/getBoxAction';
 const LOCAL_HOST_URL = 'http://localhost:4000/api/getBoxAction';
 // TODO: none of these should be called, just box
 
@@ -52,7 +52,7 @@ export default function ExamplePage() {
     // Refer to utils/constants/apiTestInputs to see the possible configs
     // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
     try {
-      const scenario = ApiTests.MULTI_HOP_OP_ARB_RARI;
+      const scenario = ApiTests.MULTI_HOP_OP_BASE_DEGEN;
       const { config, response } = await generateResponse(scenario, account!);
 
       if (chain?.id !== config?.srcChainId) {
@@ -87,14 +87,14 @@ const generateResponse = async (apiTest: ApiTests, account: Address) => {
     req = await createBoxActionRequest(account, apiTest);
   }
 
-  const url = `${BASE_URL_V1}?arguments=${JSON.stringify(
+  const url = `${BASE_URL_V2}?arguments=${JSON.stringify(
     req,
     bigintSerializer
   )}`;
   try {
     const response = await fetch(url, {
       headers: {
-        'x-api-key': process.env.NEXT_PUBLIC_DECENT_API_KEY as string,
+        'x-api-key': process.env.NEXT_PUBLIC_NEW_DECENT_API_KEY as string,
       },
     });
     const data = await response.text();

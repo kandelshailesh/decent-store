@@ -138,19 +138,28 @@ export const Usage = () => {
   const getActionArgs: UseBoxActionArgs = {
     actionType: ActionType.NftMint,
     actionConfig: {
-      contractAddress: '0x3007E0eB44222AC69E1D3c93A9e50F9CA73F53a1',
-      chainId: ChainId.ARBITRUM,
+      contractAddress: '0x9f87bf13af201d5dc894647577f7c694fa2412d9',
+      chainId: ChainId.AVALANCHE,
       cost: {
-        isNative: true,
-        amount: parseUnits('0.00005', 18),
+        isNative: false,
+        amount: 100000n,
+        tokenAddress: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E'
       },
+      signature: "function purchase(uint256[] _values,address[] _recipients,address[] _referrers,address[] _keyManagers,bytes[] _data) payable returns (uint256[] tokenIds)",
+      args: [
+        [100000n],
+        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
+        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
+        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
+        ["0x"]
+      ]
     },
-    srcChainId: ChainId.POLYGON,
+    srcChainId: ChainId.AVALANCHE,
     sender: sender!,
     slippage: 1, // 1%
-    srcToken: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC on Polygon
-    dstToken: '0x0000000000000000000000000000000000000000', // ETH
-    dstChainId: ChainId.ARBITRUM,
+    srcToken: '0x0000000000000000000000000000000000000000',
+    dstToken: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
+    dstChainId: ChainId.AVALANCHE,
   };
 
   return (
