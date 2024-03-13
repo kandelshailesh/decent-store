@@ -1,5 +1,4 @@
-import { rarible } from './constants/customChains';
-import { base } from 'viem/chains'
+import { rarible, degen } from './constants/customChains';
 import { createPublicClient, http } from 'viem';
 import { ApiTests } from '@/utils/types';
 
@@ -35,16 +34,19 @@ export const generateArgsMultiHop = async (sender: string) => {
 }
 
 export const genERC20MulitHop = async (sender: string) => {
-  // Note: need to set an approval for the inbox to spend the ERC20 - https://basescan.org/tx/0x6d1c1fb5fb434f1041e9d05a5eb41e51050fd4be0ddfa7c285e9a39e47122882
   // Sample success: https://basescan.org/tx/0x26e7e838c07e087e4971d0930d6fdfc509053be97f7735157d9bccdf3427aa1a
 
   const AMOUNT = 1000000000000n;
   const BUFFER = 10_00n; // 10% BPS
 
   const publicClient = createPublicClient({
-    chain: base,
+    chain: degen,
     transport: http(),
   });
+  const balance = await publicClient.getBalance({
+    address: "0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"
+  })
+  console.log("TEST: ", balance)
 
   const to = sender;
   const l2CallValue = AMOUNT;
@@ -55,6 +57,8 @@ export const genERC20MulitHop = async (sender: string) => {
   const { maxFeePerGas } = await publicClient.estimateFeesPerGas();
   const tokenTotalFeeAmount = maxFeePerGas && maxSubmissionCost + l2CallValue + gaslimit * maxFeePerGas;
   const data = '0x';
+
+  console.log("TEST: ", maxFeePerGas, tokenTotalFeeAmount, maxSubmissionCost)
 
   return [
     to,

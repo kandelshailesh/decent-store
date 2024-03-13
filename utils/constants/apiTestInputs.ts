@@ -139,7 +139,7 @@ const apiTestInputs: Record<ApiTests, BoxActionRequest> = {
   },
   [ApiTests.MULTI_HOP_OP_BASE_DEGEN]: {
     sender: '',
-    srcChainId: ChainId.OPTIMISM, // any source
+    srcChainId: ChainId.BASE, // any source
     srcToken: zeroAddress, // can let users select any token on source chain with DeFi liquidity
     dstChainId: ChainId.BASE,
     dstToken: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed', // must be Ethereum to call next function
@@ -147,10 +147,9 @@ const apiTestInputs: Record<ApiTests, BoxActionRequest> = {
     actionType: ActionType.NftMint,
     actionConfig: {
       chainId: ChainId.BASE,
-      contractAddress: '0xe12209d7ABe986aE24A2c1A82Fa287e94B66CC88',
+      contractAddress: '0x21A1e2BFC61F30F2E81E0b08cd37c1FC7ef776E7',
       cost: {
-        // this cost should be configurable based on maxSubmissionCost + (maxFeePerGas*gasLimit)
-        amount: parseUnits('0.00035', 18),
+        amount: parseUnits('1', 18),
         isNative: false,
         tokenAddress: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed',
       },
