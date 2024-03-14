@@ -1,4 +1,4 @@
-import { rarible, degen } from './constants/customChains';
+import { rarible, degen, xai } from './constants/customChains';
 import { createPublicClient, http } from 'viem';
 import { ApiTests } from '@/utils/types';
 
@@ -39,14 +39,25 @@ export const genERC20MulitHop = async (sender: string) => {
   const AMOUNT = 1000000000000n;
   const BUFFER = 10_00n; // 10% BPS
 
-  const publicClient = createPublicClient({
+  const publicClient1 = createPublicClient({
     chain: degen,
     transport: http(),
   });
-  const balance = await publicClient.getBalance({
-    address: "0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"
+  const publicClient2 = createPublicClient({
+    chain: xai,
+    transport: http(),
+  });
+  // 0xE5A2B1AE8c5EBf3c73328Dd27f9949F8A887E63d : 1000000150000000000n
+  // 0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232 : 3390034710000n
+  // 0xFDAf8F210d52a3f8EE416ad06Ff4A0868bB649D4 : 115591004313364744194n
+  const balance = await publicClient1.getBalance({
+    address: "0xfdaf8f210d52a3f8ee416ad06ff4a0868bb649d4"
   })
-  console.log("TEST: ", balance)
+  const balance2 = await publicClient2.getBalance({
+    address: "0xfdaf8f210d52a3f8ee416ad06ff4a0868bb649d4"
+  })
+  console.log("TEST DEGEN: ", balance)
+  console.log("TEST XAI: ", balance2)
 
   const to = sender;
   const l2CallValue = AMOUNT;
@@ -54,7 +65,7 @@ export const genERC20MulitHop = async (sender: string) => {
   const excessFeeRefundAddress = sender;
   const callValueRefundAddress = sender;
   const gaslimit = 30000n;
-  const { maxFeePerGas } = await publicClient.estimateFeesPerGas();
+  const { maxFeePerGas } = await publicClient1.estimateFeesPerGas();
   const tokenTotalFeeAmount = maxFeePerGas && maxSubmissionCost + l2CallValue + gaslimit * maxFeePerGas;
   const data = '0x';
 

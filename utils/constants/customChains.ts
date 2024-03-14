@@ -117,3 +117,26 @@ export const degen = {
   },
   testnet: false,
 };
+
+export const xai = {
+  id: 660279,
+  name: 'xai',
+  network: 'xai',
+  nativeCurrency: { name: 'Xai', symbol: 'Xai', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://xai-chain.net/rpc/http'],
+    },
+    public: {
+      http: ['https://xai-chain.net/rpc/http'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Degen Chain Explorer",
+      url: "https://explorer.xai-chain.net",
+      apiUrl: "https://explorer.xai-chain.net/api/v2",
+    },
+  },
+  testnet: false,
+};
