@@ -1,5 +1,5 @@
 import { Layout } from '@/components/Layouts/Layout';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { ClientRendered } from '@decent.xyz/box-ui';
 import {
   ChainId,
@@ -17,26 +17,12 @@ const Swap = () => {
         <BoxThemeProvider theme={darkTheme}>
           <SwapModal
             className="bg-black"
-            apiKey={process.env.NEXT_PUBLIC_NEW_DECENT_API_KEY as string}
+            apiKey={process.env.NEXT_PUBLIC_DECENT_API_KEY as string}
             address={address}
-            chainIconDictOverride={{
-              [ChainId.ZORA]: '/new-zora-icon.png',
-              [ChainId.ARBITRUM]: '/new-arb-icon.png',
-              [ChainId.AVALANCHE]: '/new-avalanche-icon.png',
-              [ChainId.BASE]: '/new-base-icon.png',
-              [ChainId.ETHEREUM]: '/new-eth-icon.png',
-              [ChainId.OPTIMISM]: '/new-op-icon.png',
-              [ChainId.POLYGON]: '/new-poly-icon.png',
-              [ChainId.DEGEN]: nativeTokenInfoLookup[ChainId.DEGEN].logo,
-              // 1: 'new-rari-icon.png',
-              // 1: 'new-zk-icon.png',
-            }}
             chainIds={[
-              ChainId.ETHEREUM,
               ChainId.OPTIMISM,
               ChainId.POLYGON,
-              ChainId.AVALANCHE,
-              ChainId.ZORA,
+              ChainId.RARIBLE,
               ChainId.ARBITRUM,
               ChainId.BASE,
             ]}
