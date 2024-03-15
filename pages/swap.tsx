@@ -16,7 +16,6 @@ const Swap = () => {
       <ClientRendered>
         <BoxThemeProvider theme={darkTheme}>
           <SwapModal
-            className="bg-black"
             apiKey={process.env.NEXT_PUBLIC_DECENT_API_KEY as string}
             address={address}
             chainIds={[
