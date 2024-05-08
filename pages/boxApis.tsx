@@ -1,59 +1,49 @@
 import { Layout } from '@/components/Layouts/Layout';
-import { Address, encodeFunctionData } from 'viem';
+import { parseUnits } from 'viem';
 import {
   ChainId,
   ActionType,
-  ActionConfig,
-  Transaction,
-  Payment,
-  BridgeId,
-  RelayInfo,
   EvmTransaction,
+  SwapDirection,
+  BoxActionRequest,
+  BoxActionResponse,
 } from '@decent.xyz/box-common';
-import { createBoxActionRequest } from '@/utils/constants/apiTestInputs';
-import { ApiTests } from '@/utils/types';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
 import { useState } from 'react';
 
-interface BoxActionRequest {
-  sender: Address;
-  srcChainId: ChainId;
-  srcToken?: Address;
-  dstChainId: ChainId;
-  dstToken?: Address;
-  slippage: number;
-  actionType: ActionType;
-  actionConfig: ActionConfig;
-}
-
-type BoxActionResponse = {
-  tx: Transaction;
-  tokenPayment?: Payment;
-  applicationFee?: Payment;
-  bridgeFee?: Payment;
-  bridgeId?: BridgeId;
-  relayInfo?: RelayInfo;
-};
-
-const BASE_URL_V1 = 'https://box-v1.api.decent.xyz/api/getBoxAction';
-const BASE_URL_V2 =
-  'https://box-v2.api.decent.xyz/api/getBoxAction';
-const LOCAL_HOST_URL = 'http://localhost:4000/api/getBoxAction';
-// TODO: none of these should be called, just box
+const BASE_URL = 'https://box-v2.api.decent.xyz/api/getBoxAction';
 
 export default function ExamplePage() {
   const { address: account } = useAccount();
   const [txHash, setTxHash] = useState('');
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
+  const vitalik = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
 
   const runTx = async () => {
-    // Refer to utils/constants/apiTestInputs to see the possible configs
-    // For testing purposes, we are defaulting to grab a random config to send. Presets enumerated in the constants file though.
+    // https://box-v2.api.decent.xyz/api/getBoxAction?arguments={%22sender%22:%220x755bdaE53b234C6D1b7Be9cE7F316CF8f03F2533%22,%22srcToken%22:%220x0000000000000000000000000000000000000000%22,%22dstToken%22:%220x0000000000000000000000000000000000000000%22,%22srcChainId%22:8453,%22dstChainId%22:666666666,%22slippage%22:1,%22actionType%22:%22swap-action%22,%22actionConfig%22:{%22chainId%22:8453,%22swapDirection%22:%22exact-amount-in%22,%22receiverAddress%22:%220x755bdaE53b234C6D1b7Be9cE7F316CF8f03F2533%22,%22amount%22:%2210000000000000000n%22}}
     try {
-      const scenario = ApiTests.MULTI_HOP_OP_BASE_DEGEN;
-      const { config, response } = await generateResponse(scenario, account!);
+      const txConfig: BoxActionRequest = {
+        sender: account || vitalik,
+        // native token on src chain (eth)
+        srcToken: '0x0000000000000000000000000000000000000000',
+        // native token on dst chain (degen)
+        dstToken: '0x0000000000000000000000000000000000000000',
+        srcChainId: ChainId.ARBITRUM,
+        dstChainId: ChainId.DEGEN,
+        slippage: 1,
+        actionType: ActionType.SwapAction,
+        actionConfig: {
+          // starting chain
+          chainId: ChainId.ARBITRUM,
+          amount: parseUnits('0.0001', 18),
+          swapDirection: SwapDirection.EXACT_AMOUNT_IN,
+          receiverAddress: account || vitalik,
+        },
+      };
+
+      const { config, response } = await generateResponse(txConfig);
 
       if (chain?.id !== config?.srcChainId) {
         switchNetwork?.(config?.srcChainId);
@@ -74,27 +64,19 @@ export default function ExamplePage() {
         onClick={() => runTx()}
         className="bg-black px-5 py-2 rounded-full text-white hover:opacity-80"
       >
-        Send a Tx
+        Swap ETH on arbitrum to DEGEN on Degen
       </button>
       <p className="py-4">{txHash}</p>
     </Layout>
   );
 }
 
-const generateResponse = async (apiTest: ApiTests, account: Address) => {
-  let req;
-  if (account) {
-    req = await createBoxActionRequest(account, apiTest);
-  }
-
-  const url = `${BASE_URL_V2}?arguments=${JSON.stringify(
-    req,
-    bigintSerializer
-  )}`;
+const generateResponse = async (apiArgs: BoxActionRequest) => {
+  const url = `${BASE_URL}?arguments=${JSON.stringify(apiArgs, bigintSerializer)}`;
   try {
     const response = await fetch(url, {
       headers: {
-        'x-api-key': process.env.NEXT_PUBLIC_NEW_DECENT_API_KEY as string,
+        'x-api-key': process.env.NEXT_PUBLIC_DECENT_API_KEY as string,
       },
     });
     const data = await response.text();
@@ -104,7 +86,7 @@ const generateResponse = async (apiTest: ApiTests, account: Address) => {
       bigintDeserializer
     );
     return {
-      config: req,
+      config: apiArgs,
       response: actionResponse,
     };
   } catch (e) {

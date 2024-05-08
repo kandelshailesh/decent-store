@@ -4,6 +4,8 @@ import { Layout } from '@/components/Layouts/Layout';
 import { CodeBlock, P } from '@/components/common';
 import { ActionType, ChainId } from '@decent.xyz/box-common';
 
+import '@decent.xyz/the-box/index.css';
+
 export default function ExamplePage() {
   return (
     <Layout>

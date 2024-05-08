@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { TokenSelectorUsage } from '@/components/TokenSelectorUsage';
 import { ChainId } from '@decent.xyz/box-common';
 
+import '@decent.xyz/the-box/index.css';
+
 export default function ExamplePage() {
   const [chainId, setChainId] = useState<ChainId>(ChainId.ARBITRUM);
 
