@@ -33,6 +33,8 @@ import {
 export const prettyPrint = (obj: any) =>
   JSON.stringify(obj, bigintSerializer, 2);
 
+const vitalik = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+
 export const BoxActionUser = ({
   getActionArgs,
 }: {
@@ -138,28 +140,21 @@ export const Usage = () => {
   const getActionArgs: UseBoxActionArgs = {
     actionType: ActionType.NftMint,
     actionConfig: {
-      contractAddress: '0x9f87bf13af201d5dc894647577f7c694fa2412d9',
-      chainId: ChainId.AVALANCHE,
+      contractAddress: '0x80F4bABDcba710E6B0C07c760c3C5B061C31b6C0',
+      chainId: ChainId.ARBITRUM,
       cost: {
-        isNative: false,
-        amount: 100000n,
-        tokenAddress: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E'
+        isNative: true,
+        amount: parseUnits('0.00001', 18),
       },
-      signature: "function purchase(uint256[] _values,address[] _recipients,address[] _referrers,address[] _keyManagers,bytes[] _data) payable returns (uint256[] tokenIds)",
-      args: [
-        [100000n],
-        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
-        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
-        ["0x5D7370fCD6e446bbC14A64c1EFfe5FBB1c893232"],
-        ["0x"]
-      ]
+      signature: 'function mint(address to,uint256 numberOfTokens)',
+      args: [sender || vitalik, 1n],
     },
-    srcChainId: ChainId.AVALANCHE,
+    srcChainId: ChainId.BASE,
     sender: sender!,
     slippage: 1, // 1%
     srcToken: '0x0000000000000000000000000000000000000000',
-    dstToken: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
-    dstChainId: ChainId.AVALANCHE,
+    dstToken: '0x0000000000000000000000000000000000000000', // USDC
+    dstChainId: ChainId.ARBITRUM,
   };
 
   return (

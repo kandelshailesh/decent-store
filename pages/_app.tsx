@@ -12,7 +12,7 @@ import localFont from 'next/font/local';
 
 // Default styles that can be overridden by your app
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
-import { arbitrum, mainnet, optimism, polygon, base, avalanche } from 'wagmi/chains';
+import { arbitrum, mainnet, optimism, polygon, base, avalanche, zora } from 'wagmi/chains';
 if (process.env.NODE_ENV !== 'development') {
   // @ts-ignore
   import('@decent.xyz/the-box/index.css').then(() => {
@@ -51,6 +51,7 @@ const { chains, publicClient } = configureChains(
     rarible,
     raribleTestnet,
     avalanche,
+    zora
   ],
   [
     // @ts-ignore
