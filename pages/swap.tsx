@@ -4,6 +4,7 @@ import { ClientRendered } from '@decent.xyz/box-ui';
 import { ChainId, nativeTokenInfoLookup } from '@decent.xyz/box-common';
 import { SwapModal, BoxThemeProvider } from '@decent.xyz/the-box';
 import '@decent.xyz/the-box/index.css';
+import { wagmiConfig } from '@/utils/wagmiConfig';
 
 const Swap = () => {
   const { address } = useAccount();
@@ -32,6 +33,7 @@ const Swap = () => {
             chainId: ChainId.EDGELESS,
             tokenInfo: nativeTokenInfoLookup[ChainId.EDGELESS],
           }}
+          wagmiConfig={wagmiConfig}
         />
       </ClientRendered>
     </Layout>

@@ -13,7 +13,7 @@ import {
   parseUnits,
   TransactionReceipt,
 } from 'viem';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { ClientRendered } from '@decent.xyz/box-ui';
 import {
   getAccount,
@@ -29,6 +29,7 @@ import {
   EvmTransaction,
   getChainExplorerTxLink,
 } from '@decent.xyz/box-common';
+import { wagmiConfig } from '@/utils/wagmiConfig';
 
 export const prettyPrint = (obj: any) =>
   JSON.stringify(obj, bigintSerializer, 2);
@@ -42,8 +43,8 @@ export const BoxActionUser = ({
 }) => {
   const { actionResponse, isLoading, error } = useBoxAction(getActionArgs);
   const [hash, setHash] = useState<Hex>();
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const { chain } = useNetwork();
+  const { switchChainAsync } = useSwitchChain();
+  const { chain } = useAccount();
   const bridgeId = actionResponse?.bridgeId;
   const { srcChainId, dstChainId } = getActionArgs;
   const [srcTxReceipt, setSrcTxReceipt] = useState<TransactionReceipt>();
@@ -68,24 +69,25 @@ export const BoxActionUser = ({
       <Button
         onClick={async () => {
           try {
-            const account = getAccount();
-            const publicClient = getPublicClient();
+            const account = getAccount(wagmiConfig);
+            const publicClient = getPublicClient(wagmiConfig);
+            console.log({chain, srcChainId})
             if (chain?.id !== srcChainId) {
-              await switchNetworkAsync?.(srcChainId);
+              await switchChainAsync?.({ chainId: Number(srcChainId) });
             }
             const tx = actionResponse.tx as EvmTransaction;
-            const gas = await publicClient.estimateGas({
+            const gas = await publicClient?.estimateGas({
               account,
               ...tx,
             } as unknown as EstimateGasParameters);
-            const { hash } = await sendTransaction({
+            const hash = await sendTransaction(wagmiConfig, {
               ...tx,
               gas,
             });
             setHash(hash);
             // catch viem polygon error
             try {
-              const receipt = await waitForTransaction({ hash });
+              const receipt = await waitForTransaction(wagmiConfig, { hash });
               setSrcTxReceipt(receipt);
             } catch (e) {}
           } catch (e) {

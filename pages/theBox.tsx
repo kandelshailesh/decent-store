@@ -3,6 +3,7 @@ import { parseUnits } from 'viem';
 import { Layout } from '@/components/Layouts/Layout';
 import { CodeBlock, P } from '@/components/common';
 import { ActionType, ChainId } from '@decent.xyz/box-common';
+import { wagmiConfig } from '@/utils/wagmiConfig';
 
 import '@decent.xyz/the-box/index.css';
 
@@ -25,6 +26,7 @@ export default function ExamplePage() {
           },
         }}
         apiKey={process.env.NEXT_PUBLIC_DECENT_API_KEY as string}
+        wagmiConfig={wagmiConfig}
       />
     </Layout>
   );

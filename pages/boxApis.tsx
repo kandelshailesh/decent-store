@@ -8,17 +8,17 @@ import {
   BoxActionRequest,
   BoxActionResponse,
 } from '@decent.xyz/box-common';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
 import { useState } from 'react';
+import { wagmiConfig } from '@/utils/wagmiConfig';
 
 const BASE_URL = 'https://box-v2.api.decent.xyz/api/getBoxAction';
 
 export default function ExamplePage() {
-  const { address: account } = useAccount();
+  const { address: account, chain } = useAccount();
   const [txHash, setTxHash] = useState('');
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
   const vitalik = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
 
   const runTx = async () => {
@@ -46,10 +46,10 @@ export default function ExamplePage() {
       const { config, response } = await generateResponse(txConfig);
 
       if (chain?.id !== config?.srcChainId) {
-        switchNetwork?.(config?.srcChainId);
+        switchChain?.({ chainId: Number(config?.srcChainId)});
       } else {
         const tx = response?.tx as EvmTransaction;
-        const { hash } = await sendTransaction(tx);
+        const hash = await sendTransaction(wagmiConfig, tx);
         setTxHash(hash);
       }
     } catch (e) {
