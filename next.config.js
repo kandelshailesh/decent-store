@@ -5,6 +5,7 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
+  transpilePackages: ["@decent.xyz/the-box"],
 };
 
 module.exports = nextConfig;
