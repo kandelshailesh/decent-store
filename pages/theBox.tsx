@@ -5,33 +5,113 @@ import { CodeBlock, P } from '@/components/common';
 import { ActionType, ChainId } from '@decent.xyz/box-common';
 import { wagmiConfig } from '@/utils/wagmiConfig';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
+import axios from 'axios';
 
 import '@decent.xyz/the-box/index.css';
+import { useEffect, useState } from 'react';
+
+const config = {
+  [ChainId.POLYGON_TESTNET]: {
+    contractAddress: '0x9A681B1501c37a8911880e8cD70Aa3e0f6153a90',
+    tokenAddress: ''
+  },
+  [ChainId.POLYGON]: {
+    // 0xC9f7DD5Dca7848798210008e8493f385f0771893
+    // original
+    // contractAddress: '0x17acD660eb038EC55274d9CE8bd2ae50FFdC60E4',
+    // new
+    contractAddress: '0x3cd005E512cDc3BcCDbb3D636B3C245FceA4a9b5',
+    tokenAddress: '0x2bC07124D8dAc638E290f401046Ad584546BC47b'
+  }
+}
+
+const chainId = ChainId.POLYGON;
+
+const itemId = 'cdh_30days';
+const quantity = 1;
+const amount = 1000000000000000000;
 
 export default function ExamplePage() {
   const { openConnectModal } = useConnectModal();
 
+  const { address, isConnected } = useAccount();
+
+  const [signature, setSignature] = useState('');
+
+  const [playerId, setPlayerId] = useState('');
+
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const getPlayerId = async () => {
+    try {
+      const response = await axios.post('https://cors-anywhere.herokuapp.com/https://cdh-web-api-preprod-dot-tower-token-firestore.df.r.appspot.com/get_linked_status', { walletAddress: address });
+      const { playerId } = response.data;
+      console.log("Player info", playerId);
+      setPlayerId(playerId);
+      return playerId;
+    } catch (error) {
+      console.log("Error while fetching the player info", error);
+    }
+  }
+
+  const getSignature = async () => {
+    try {
+      setErrorMsg('');
+      setPlayerId('');
+      const playerId = await getPlayerId();
+      if (!playerId) {
+        setErrorMsg('Linked player id not found');
+        return;
+      }
+      const response = await axios.post('https://cors-anywhere.herokuapp.com/https://cdh-shop-api-preprod-dot-tower-token-firestore.df.r.appspot.com/store/order/verify', { playerId, walletAddress: address, fingerprint: 'abcdef', itemId: itemId, quantity });
+      const result = response.data;
+      console.log("Signature result", result);
+      setSignature(result.orderSignature);
+    } catch (error: any) {
+      console.log("Error", error);
+      setErrorMsg(error?.response?.data?.message);
+    }
+  }
+
+  useEffect(() => {
+    if (address) {
+      getSignature()
+    }
+  }, [address])
+
   return (
     <Layout>
-      <h1 className={'font-semibold text-2xl mb-2'}>The Box Example</h1>
-      <P>Note: to properly load the styles, be sure to include:</P>
-      <CodeBlock>{`import '@decent.xyz/the-box/index.css';`}</CodeBlock>
       <TheBox
         className="rounded-lg border shadow-md bg-white dark"
-        paymentButtonText="MINT ME"
-        actionType={ActionType.NftMint}
+        paymentButtonText="Purchase Item"
+        actionType={ActionType.EvmFunction}
         actionConfig={{
-          contractAddress: '0x3007E0eB44222AC69E1D3c93A9e50F9CA73F53a1',
-          chainId: ChainId.ARBITRUM,
+          contractAddress: config[chainId].contractAddress,
+          chainId: chainId,
           cost: {
-            isNative: true,
-            amount: parseUnits('0.00005', 18),
+            amount: parseUnits('1', 18),
+            isNative: false,
+            tokenAddress: config[chainId].tokenAddress,
           },
+          signature:
+            'function purchase(address _purchaser, string _itemId, uint256 _quantity, uint256 _totalAmount, bytes _sig)',
+          args: [
+            address,
+            itemId,
+            BigInt(quantity),
+            BigInt(amount),
+            signature,
+          ],
         }}
         apiKey={process.env.NEXT_PUBLIC_DECENT_API_KEY as string}
         wagmiConfig={wagmiConfig}
         onConnectWallet={() => openConnectModal}
       />
+
+      {/* {JSON.stringify({ playerId, address, signature })} */}
+      {!address && <p style={{ 'color': 'red' }}>Please connect to the wallet</p>}
+      {errorMsg && <p style={{ 'color': 'red' }}>{errorMsg}</p>}
     </Layout>
   );
 }
